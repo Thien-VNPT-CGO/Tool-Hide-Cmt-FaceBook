@@ -1,0 +1,7 @@
+{
+  "name": "AutoMod FB - Hệ Thống Ẩn Comment & Quản Lý Tương Tác Facebook Ads",
+  "description": "Tool chuyên nghiệp ẩn comment Facebook tự động theo từ khóa, lọc spam bằng AI, bảo vệ bài viết quảng cáo, báo cáo Excel/PDF và đồng bộ thời gian thực.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
