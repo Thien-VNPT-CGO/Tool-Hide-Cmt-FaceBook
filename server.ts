@@ -90,17 +90,28 @@ app.post('/api/fb/hide', async (req: Request, res: Response) => {
   }
 });
 
-// Serve frontend if running fullstack monolithic (fallback)
-const distPath = path.join(__dirname, 'dist');
+// Serve React Frontend SPA directly on Render
+const distPath = path.resolve(process.cwd(), 'dist');
 app.use(express.static(distPath));
+
 app.get('*', (req: Request, res: Response) => {
-  res.sendFile(path.join(distPath, 'index.html'), (err) => {
+  const indexPath = path.join(distPath, 'index.html');
+  res.sendFile(indexPath, (err) => {
     if (err) {
-      res.status(200).send('AutoMod FB Backend Server is running on Render.');
+      res.status(200).send(`
+        <!DOCTYPE html>
+        <html>
+          <head><title>AutoMod FB Server</title></head>
+          <body style="font-family:sans-serif;padding:40px;text-align:center;">
+            <h2>AutoMod FB Server is active on Render!</h2>
+            <p>Trạng thái: Máy chủ Node.js & React SPA đã sẵn sàng.</p>
+          </body>
+        </html>
+      `);
     }
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`[AutoMod FB] Server running on port ${PORT}`);
+app.listen(Number(PORT), '0.0.0.0', () => {
+  console.log(`[AutoMod FB] Server running on 0.0.0.0:${PORT}`);
 });

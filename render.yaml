@@ -1,16 +1,14 @@
 services:
   - type: web
-    name: automod-fb-backend
+    name: automod-fb-app
     env: node
     plan: free
-    buildCommand: npm install
-    startCommand: npx tsx server.ts
+    buildCommand: npm install && npm run build
+    startCommand: node server.mjs
     envVars:
       - key: PORT
         value: 10000
       - key: FB_VERIFY_TOKEN
-        generateValue: true
-      - key: FRONTEND_URL
-        value: https://your-app.vercel.app
+        value: automod_fb_secret_token_2026
       - key: GEMINI_API_KEY
         sync: false

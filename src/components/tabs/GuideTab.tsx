@@ -363,89 +363,72 @@ export const GuideTab: React.FC<GuideTabProps> = ({ lang, soundEnabled }) => {
           <div className="border-b border-neutral-200 dark:border-neutral-800 pb-4">
             <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
               <Server className="w-4 h-4 text-purple-500" />
-              <span>Hướng Dẫn Triển Khai Vercel (UI) + Render (Backend Server) Từ A-Z</span>
+              <span>Hướng Dẫn Triển Khai Trọn Gói 100% Trên Render (All-in-One Fullstack)</span>
             </h2>
             <p className="text-xs text-neutral-500 mt-1">
-              Mô hình chuẩn tối ưu: Vercel phục vụ giao diện React SPA siêu tốc với CDN toàn cầu, Render chạy Node.js / Express Server 24/7 để nhận Webhook Facebook và gọi Graph API.
+              Chỉ cần duy nhất 1 Web Service trên Render: Máy chủ Node.js phục vụ đồng thời cả giao diện web React và hệ thống Webhook / Graph API Facebook. Không cần cài đặt Vercel, không lo lỗi CORS!
             </p>
           </div>
 
           {/* Architecture diagram */}
           <div className="p-4 rounded-xl bg-neutral-950 text-white font-mono text-xs space-y-2">
-            <p className="text-emerald-400 font-bold">MÔ HÌNH KIẾN TRÚC HOẠT ĐỘNG:</p>
+            <p className="text-emerald-400 font-bold">MÔ HÌNH TRỌN GÓI TRÊN RENDER:</p>
             <p className="text-neutral-300">
-              [Facebook Users / Fanpage] &rarr; [Meta Webhook feed] &rarr; <strong>Render Backend</strong> (Node.js/Express)
+              👉 Domain duy nhất: <code>https://automod-fb-app.onrender.com</code>
             </p>
             <p className="text-neutral-300">
-              [Quản trị viên / Nhân sự] &larr;&rarr; <strong>Vercel Frontend</strong> (React + Vite SPA) &larr;&rarr; <strong>Render API</strong>
+              • Giao diện web người dùng: <code>https://automod-fb-app.onrender.com/</code> (React SPA)
+            </p>
+            <p className="text-neutral-300">
+              • Endpoint nhận Webhook Facebook: <code>https://automod-fb-app.onrender.com/webhook</code>
+            </p>
+            <p className="text-neutral-300">
+              • Kiểm tra trạng thái máy chủ: <code>https://automod-fb-app.onrender.com/api/health</code>
             </p>
           </div>
 
-          {/* Part 1: Render Backend */}
+          {/* Step 1: Render Web Service */}
           <div className="space-y-3 text-xs">
             <h3 className="font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px]">1</span>
-              <span>Triển Khai Backend Server Trên Render.com</span>
+              <span>Tạo Web Service Trên Render.com</span>
             </h3>
             <div className="space-y-2 text-neutral-600 dark:text-neutral-400 leading-relaxed pl-7">
               <p>1. Đăng nhập <strong>dashboard.render.com</strong> &gt; Bấm <strong>"New +"</strong> &gt; Chọn <strong>"Web Service"</strong>.</p>
               <p>2. Kết nối kho mã nguồn GitHub của bạn.</p>
-              <p>3. Thiết lập thông số như sau:</p>
+              <p>3. Thiết lập chính xác 4 mục sau:</p>
               <ul className="list-disc pl-5 space-y-1 font-mono text-[11px] text-neutral-800 dark:text-neutral-200">
-                <li>Name: <code>automod-fb-backend</code></li>
+                <li>Name: <code>automod-fb-app</code></li>
+                <li>Region: <code>Singapore</code> (gần Việt Nam, tốc độ phản hồi nhanh nhất)</li>
                 <li>Runtime: <code>Node</code></li>
-                <li>Build Command: <code>npm install</code></li>
-                <li>Start Command: <code>npx tsx server.ts</code> (hoặc <code>node server.ts</code>)</li>
+                <li>Build Command: <code>npm install && npm run build</code></li>
+                <li>Start Command: <code>node server.mjs</code></li>
               </ul>
               <p>4. Thêm các biến môi trường (Environment Variables) trong Render:</p>
               <pre className="p-3 rounded-lg bg-neutral-950 text-emerald-400 font-mono text-[11px] leading-relaxed">
 {`PORT=10000
 FB_VERIFY_TOKEN=automod_fb_secret_token_2026
-FRONTEND_URL=https://your-project.vercel.app
 GEMINI_API_KEY=YOUR_GEMINI_KEY`}
               </pre>
-              <p>5. Bấm <strong>"Create Web Service"</strong>. Khi hoàn tất bạn sẽ nhận được URL backend dạng: <code>https://automod-fb-backend.onrender.com</code>.</p>
+              <p>5. Bấm <strong>"Create Web Service"</strong>. Render sẽ tự động build Vite frontend và máy chủ Node.js vào cùng 1 cổng!</p>
             </div>
           </div>
 
-          {/* Part 2: Vercel Frontend */}
+          {/* Step 2: Facebook Webhook */}
           <div className="space-y-3 text-xs pt-3 border-t border-neutral-100 dark:border-neutral-800">
             <h3 className="font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px]">2</span>
-              <span>Triển Khai Giao Diện Người Dùng (UI) Trên Vercel</span>
-            </h3>
-            <div className="space-y-2 text-neutral-600 dark:text-neutral-400 leading-relaxed pl-7">
-              <p>1. Đăng nhập <strong>vercel.com</strong> &gt; Bấm <strong>"Add New..."</strong> &gt; <strong>"Project"</strong>.</p>
-              <p>2. Chọn Repository GitHub dự án.</p>
-              <p>3. Vercel tự động nhận diện framework <strong>Vite</strong>:</p>
-              <ul className="list-disc pl-5 space-y-1 font-mono text-[11px] text-neutral-800 dark:text-neutral-200">
-                <li>Framework Preset: <code>Vite</code></li>
-                <li>Build Command: <code>npm run build</code></li>
-                <li>Output Directory: <code>dist</code></li>
-              </ul>
-              <p>4. Thêm biến môi trường trong Vercel:</p>
-              <pre className="p-3 rounded-lg bg-neutral-950 text-emerald-400 font-mono text-[11px] leading-relaxed">
-{`VITE_API_URL=https://automod-fb-backend.onrender.com`}
-              </pre>
-              <p>5. Bấm <strong>"Deploy"</strong>. Dự án đã có sẵn file <code>vercel.json</code> hỗ trợ SPA routing chống lỗi 404 khi F5 tải lại trang.</p>
-            </div>
-          </div>
-
-          {/* Part 3: Facebook Webhooks Setup */}
-          <div className="space-y-3 text-xs pt-3 border-t border-neutral-100 dark:border-neutral-800">
-            <h3 className="font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">3</span>
-              <span>Cấu Hình Webhook Trên Meta for Developers (Nhận Bình Luận Thời Gian Thực)</span>
+              <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">2</span>
+              <span>Cấu Hình Webhook Trên Meta for Developers</span>
             </h3>
             <div className="space-y-2 text-neutral-600 dark:text-neutral-400 leading-relaxed pl-7">
               <p>1. Vào <strong>developers.facebook.com/apps</strong> &gt; Chọn ứng dụng của bạn.</p>
               <p>2. Vào mục <strong>Webhooks</strong> &gt; Chọn đối tượng <strong>Page (Trang)</strong> &gt; Bấm <strong>"Subscribe to this object"</strong>.</p>
               <ul className="list-disc pl-5 space-y-1 font-mono text-[11px] text-neutral-800 dark:text-neutral-200">
-                <li>Callback URL: <code>https://automod-fb-backend.onrender.com/webhook</code></li>
-                <li>Verify Token: <code>automod_fb_secret_token_2026</code> (khớp với biến FB_VERIFY_TOKEN trên Render)</li>
+                <li>Callback URL: <code>https://automod-fb-app.onrender.com/webhook</code></li>
+                <li>Verify Token: <code>automod_fb_secret_token_2026</code></li>
               </ul>
-              <p>3. Trong danh sách sự kiện của Trang, tích chọn đăng ký sự kiện: <code>feed</code>.</p>
-              <p>4. Khi có bất kỳ ai comment bài viết, Facebook sẽ bắn dữ liệu về Render server trong vòng dưới 50ms &rarr; Render ẩn comment ngay lập tức!</p>
+              <p>3. Trong danh sách sự kiện Trang, tích chọn đăng ký: <code>feed</code>.</p>
+              <p>4. Hoàn tất! Giờ đây khi có bình luận trên Facebook, Render sẽ nhận ngay lập tức, tự động ẩn vi phạm và hiển thị trên giao diện web của bạn.</p>
             </div>
           </div>
         </div>
